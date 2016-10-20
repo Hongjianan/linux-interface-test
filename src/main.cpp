@@ -392,8 +392,11 @@ extern int TcpSelect(int argc, char *argv[]);
 #endif
 
 #if SELECTTEST_CPP
-extern int SelectTest(int argc, char *argv[]);
-	ret = SelectTest(argc, argv);
+int SelectTest(int argc, char *argv[]);                                 ret = SelectTest(argc, argv);
+#endif
+
+#if TCP_ECHO_SERVER_MULTI_PROCESS_CPP
+int TcpEchoServerMultiProcess(int argc, char *argv[]);                  ret = TcpEchoServerMultiProcess(argc, argv);
 #endif
 
 	/* time */

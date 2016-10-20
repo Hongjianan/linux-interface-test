@@ -91,7 +91,7 @@
 
 /* pthread */
 #define PTHREADCANCELTEST_CPP				CONFIG_DISABLE	/* pthreadTest.cpp */
-#define PTHREAD_KEY_TEST_CPP				CONFIG_ABLE	/* pthreadTest.cpp */
+#define PTHREAD_KEY_TEST_CPP				CONFIG_DISABLE	/* pthreadTest.cpp */
 
 /* segfault */
 #define SEGFAULTTEST_CPP					CONFIG_DISABLE	/* segfaultTest.cpp */
@@ -148,6 +148,9 @@
 #define TCPFILETRANSMITTER_CPP				CONFIG_DISABLE	/* fileTransmitter.cpp */
 #define TCPCHATMULTIPROCESS_CPP				CONFIG_DISABLE	/* tcpChatMultiProcess.cpp */
 #define TCPSELECT_CPP						CONFIG_DISABLE	/* tcpSelect.cpp */
+#define TCP_ECHO_SERVER_MULTI_PROCESS_CPP   CONFIG_ABLE
+#define TCP_ECHO_SERVER_SELECT_CPP          CONFIG_DISABLE
+
 
 /* time */
 #define TIMETEST_CPP						CONFIG_DISABLE	/* timeTest.cpp */

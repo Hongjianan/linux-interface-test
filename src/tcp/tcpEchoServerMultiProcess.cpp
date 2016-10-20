@@ -5,7 +5,7 @@
  *      Author: Hong
  */
 #include "../config.h"
-#if TCPECHOSERVERMULTIPROCESS_CPP
+#if TCP_ECHO_SERVER_MULTI_PROCESS_CPP
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,12 +25,12 @@
 #include <netdb.h>
 
 
-#define PORT_SERVER		12345
+#define PORT_SERVER		20001
 #define PORT_CLIENT		54321
 
-const char *gLocalIP = "192.168.0.111";
+const char *gLocalIP = "127.0.0.1";
 
-void *ThreadRecv(void *arg);
+void *ThreadServerResponse(void *arg);
 void sigHandler_SIGCHLD(int signo);
 
 int InitInetSocket(const char *localIp, unsigned short localPort, const char *proto);
@@ -47,8 +47,8 @@ int TcpEchoServerMultiProcess(int argc, char *argv[])
 	int ret;
 
 //	ret = TcpEchoServerMultiProcess_Client(argc, argv);
-	ret = TcpEchoServerMultiProcess_Server(argc, argv);
-//	ret = TcpEchoServerMultiThread_Server(argc, argv);
+//	ret = TcpEchoServerMultiProcess_Server(argc, argv);
+	ret = TcpEchoServerMultiThread_Server(argc, argv);
 
 	return ret;
 }
@@ -136,7 +136,6 @@ int TcpEchoServerMultiThread_Server(int argc, char *argv[])
 	int clientFd;
 	struct sockaddr_in clientAddr;
 	socklen_t len;
-	int childPid;
 
 	while (1)
 	{
@@ -152,7 +151,7 @@ int TcpEchoServerMultiThread_Server(int argc, char *argv[])
 				inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 
 		pthread_t threadRecv;
-		pthread_create(&threadRecv, NULL, ThreadRecv, &clientFd);
+		pthread_create(&threadRecv, NULL, ThreadServerResponse, &clientFd);
 	}
 
 	return 0;
@@ -257,31 +256,28 @@ int ServerRecv(const int sockFd)
 	int dataLen;
 	pid_t pid = getpid();
 
-	int iTimes;
-	for (iTimes = 0; ; ++iTimes)
-	{
-		dataLen = recv(sockFd, recvBuf, sizeof(recvBuf), 0);
-		if (dataLen > 0)
-		{
-			recvBuf[dataLen] = '\0';
-			printf("[pid:%05u print] recv length[%d]:\n%s[message end]\n", pid, dataLen, recvBuf);
-		}
-		else if (0 == dataLen)
-		{
-			printf("[pid:%05u print]:client exit\n", pid);
-			break;
-		}
-		else if (-1 == dataLen)
-		{
-			printf("net error\n");
-			return -1;
-		}
-	}
+    dataLen = recv(sockFd, recvBuf, sizeof(recvBuf), 0);
+    if (dataLen > 0)
+    {
+        recvBuf[dataLen] = '\0';
+        printf("[pid:%05u print] recv length[%d]\n  %s******\n", pid, dataLen, recvBuf);
+        send(sockFd, "666", 3, 0);
+        close(sockFd);
+    }
+    else if (0 == dataLen)
+    {
+        printf("[pid:%05u print]:client exit\n", pid);
+    }
+    else if (-1 == dataLen)
+    {
+        printf("net error\n");
+        return -1;
+    }
 
 	return 0;
 }
 
-void *ThreadRecv(void *arg)
+void *ThreadServerResponse(void *arg)
 {
 	static int threadCnt = 0;
 	++threadCnt;
@@ -311,5 +307,5 @@ void sigHandler_SIGCHLD(int signo)
 
 }
 
-#endif /* TCPECHOSERVERMULTIPROCESS_CPP */
+#endif /* TCP_ECHO_SERVER_MULTI_PROCESS_CPP */
 /* end file */
